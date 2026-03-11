@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EventHub - Event Registration</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f4f4f4;
+transition:0.4s;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+padding:15px 40px;
+background:#222;
+color:white;
+}
+
+.hero{
+text-align:center;
+padding:60px;
+background:linear-gradient(120deg,#6a11cb,#2575fc);
+color:white;
+}
+
+.section-title{
+text-align:center;
+margin-top:30px;
+}
+
+.events{
+display:flex;
+justify-content:center;
+gap:30px;
+padding:30px;
+flex-wrap:wrap;
+}
+
+.card{
+background:white;
+border-radius:10px;
+width:250px;
+text-align:center;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+overflow:hidden;
+transition:0.3s;
+}
+
+.card:hover{
+transform:scale(1.05);
+}
+
+.card img{
+width:100%;
+height:150px;
+object-fit:cover;
+}
+
+.card button{
+margin:15px;
+padding:10px 20px;
+border:none;
+background:#2575fc;
+color:white;
+cursor:pointer;
+border-radius:5px;
+}
+
+.form-container{
+display:none;
+justify-content:center;
+margin:40px;
+}
+
+form{
+background:white;
+padding:25px;
+border-radius:10px;
+width:300px;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+}
+
+button{
+margin-top:15px;
+padding:10px;
+width:100%;
+}
+
+footer{
+text-align:center;
+padding:20px;
+background:#222;
+color:white;
+margin-top:50px;
+}
+
+.dark{
+background:#111;
+color:white;
+}
+
+.dark .card{
+background:#222;
+color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>🎉 EventHub</h1>
+<button onclick="toggleMode()">🌙</button>
+</header>
+
+<section class="hero">
+<h2>Discover & Register for Amazing Events</h2>
+<p>Music • Technology • Art • Sports</p>
+</section>
+
+<h2 class="section-title">Upcoming Events</h2>
+
+<div class="events">
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1506157786151-b8491531f063">
+<h3>Music Festival</h3>
+<p>Seats left: <span id="musicSeats">50</span></p>
+<button onclick="openForm('Music Festival')">Register</button>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1518770660439-4636190af475">
+<h3>Tech Workshop</h3>
+<p>Seats left: <span id="techSeats">40</span></p>
+<button onclick="openForm('Tech Workshop')">Register</button>
+</div>
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262">
+<h3>Art Exhibition</h3>
+<p>Seats left: <span id="artSeats">30</span></p>
+<button onclick="openForm('Art Exhibition')">Register</button>
+</div>
+
+</div>
+
+<div class="form-container" id="formContainer">
+
+<form id="eventForm">
+
+<h2>Register for Event</h2>
+
+<input type="text" placeholder="Your Name" id="name" required>
+
+<input type="email" placeholder="Email Address" id="email" required>
+
+<input type="tel" placeholder="Phone Number" id="phone" required>
+
+<input type="hidden" id="eventName">
+
+<button type="submit">Confirm Registration</button>
+
+<p id="message"></p>
+
+</form>
+
+</div>
+
+<footer>
+<p>© 2026 EventHub | Designed for Event Lovers</p>
+</footer>
+
+<script>
+
+function openForm(event){
+
+document.getElementById("formContainer").style.display="flex";
+
+document.getElementById("eventName").value=event;
+
+}
+
+document.getElementById("eventForm").addEventListener("submit",function(e){
+
+e.preventDefault();
+
+let name=document.getElementById("name").value;
+let event=document.getElementById("eventName").value;
+
+document.getElementById("message").innerHTML=
+"🎉 "+name+" successfully registered for "+event;
+
+updateSeats(event);
+
+this.reset();
+
+});
+
+function updateSeats(event){
+
+if(event==="Music Festival"){
+let seats=document.getElementById("musicSeats");
+seats.innerText=seats.innerText-1;
+}
+
+if(event==="Tech Workshop"){
+let seats=document.getElementById("techSeats");
+seats.innerText=seats.innerText-1;
+}
+
+if(event==="Art Exhibition"){
+let seats=document.getElementById("artSeats");
+seats.innerText=seats.innerText-1;
+}
+
+}
+
+function toggleMode(){
+document.body.classList.toggle("dark");
+}
+
+</script>
+
+</body>
+</html>
