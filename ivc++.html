@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nandhana - Modern Restaurant Template</title>
+  <meta name="description" content="Demo restaurant website with menu, booking, and online ordering (HTML/CSS/JS single file)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ------------------
+       Global / Utility
+       ------------------*/
+    :root{
+      --accent:#d97706; /* warm saffron */
+      --accent-2:#b91c1c; /* deep red */
+      --muted:#6b7280;
+      --bg:#0f172a;
+      --card:#0b1220;
+      --glass: rgba(255,255,255,0.04);
+      --radius:14px;
+      color-scheme: dark;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(180deg,#071028 0%, #021024 100%);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.4;
+      padding-bottom:80px;
+    }
+
+    /* ---------- Layout ---------- */
+    .container{width:min(1200px,94%);margin:0 auto}
+    header{position:sticky;top:10px;z-index:40}
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;padding:14px;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,0.03), transparent);backdrop-filter:blur(6px);
+      box-shadow:0 6px 20px rgba(2,6,23,0.6);
+    }
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{
+      width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#071028;font-size:22px
+    }
+    .nav-links{display:flex;gap:18px;align-items:center}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:8px 12px;border-radius:10px}
+    .nav-links a:hover{color:#fff;background:rgba(255,255,255,0.03)}
+    .cta{background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:10px 16px;border-radius:12px;color:#071028;font-weight:700;cursor:pointer}
+
+    /* ---------- Hero ---------- */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:26px;padding:56px 0;align-items:center}
+    .hero-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:28px;border-radius:18px}
+    .eyebrow{display:inline-block;background:rgba(255,255,255,0.03);padding:6px 10px;border-radius:999px;color:var(--accent);font-weight:700}
+    h1{font-size:36px;margin:12px 0 8px}
+    .lead{color:var(--muted);max-width:60%;}
+
+    .hero-side{border-radius:18px;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));}
+    .stats{display:flex;gap:12px;flex-wrap:wrap}
+    .stat{background:var(--glass);padding:12px;border-radius:12px;min-width:120px;text-align:center}
+
+    /* ---------- Sections ---------- */
+    section{margin-top:28px}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .section-title h2{margin:0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+    /* ---------- Cards: Menu ---------- */
+    .menu-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:18px;border-radius:14px;display:flex;gap:12px;align-items:center}
+    .dish-thumb{width:96px;height:96px;border-radius:12px;background:linear-gradient(180deg,#111827,#0b1220);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted)}
+    .dish-info h3{margin:0;font-size:18px}
+    .dish-info p{margin:6px 0;color:var(--muted);font-size:14px}
+    .price{font-weight:700;color:var(--accent)}
+    .add-btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:8px 10px;border-radius:10px;color:#071028;font-weight:700;cursor:pointer}
+
+    /* ---------- Filters / Tabs ---------- */
+    .tabs{display:flex;gap:8px;margin-bottom:16px}
+    .tab{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.03);cursor:pointer;color:var(--muted)}
+    .tab.active{background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));color:#fff}
+
+    /* ---------- Cart & Booking Drawer ---------- */
+    .drawer{position:fixed;right:18px;bottom:18px;width:380px;max-width:92%;background:linear-gradient(180deg, #07162b, #021022);border-radius:16px;padding:14px;box-shadow:0 18px 40px rgba(2,6,23,0.7)}
+    .drawer h3{margin:0 0 8px}
+    .cart-items{max-height:260px;overflow:auto;padding-right:8px}
+    .cart-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.03)}
+    .qty{display:flex;gap:6px;align-items:center}
+    .qty button{padding:6px 8px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:var(--muted);cursor:pointer}
+
+    /* ---------- Booking Modal ---------- */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;align-items:center;justify-content:center;z-index:60}
+    .modal{background:linear-gradient(180deg,#021024,#07122a);padding:20px;border-radius:12px;width:420px;max-width:92%}
+    .form-row{display:flex;flex-direction:column;margin-bottom:10px}
+    .form-row label{font-size:13px;color:var(--muted);margin-bottom:6px}
+    .form-row input,.form-row textarea, .form-row select{padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.02);color:inherit}
+    .primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));padding:10px 14px;border-radius:10px;border:none;color:#071028;font-weight:700;cursor:pointer}
+
+    /* ---------- Footer ---------- */
+    footer{margin-top:36px;padding:24px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+
+    /* ---------- Responsive ---------- */
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr}
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .drawer{width:340px}
+    }
+    @media (max-width:640px){
+      .nav-links{display:none}
+      .grid{grid-template-columns:1fr}
+      h1{font-size:28px}
+      .lead{max-width:100%}
+      .drawer{right:10px;left:10px}
+    }
+
+    /* Small subtle hover transitions */
+    .menu-card, .hero-card, .stat{transition:transform .18s ease, box-shadow .18s ease}
+    .menu-card:hover{transform:translateY(-6px)}
+    .cta:active{transform:translateY(1px)}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <nav class="nav" role="navigation" aria-label="Main Navigation">
+        <div class="brand">
+          <div class="logo">N</div>
+          <div>
+            <div style="font-weight:800">Nandhana</div>
+            <div style="font-size:12px;color:var(--muted)">Traditional taste • Modern style</div>
+          </div>
+        </div>
+        <div class="nav-links">
+          <a href="#menu">Menu</a>
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#contact">Contact</a>
+          <button class="cta" id="reserveBtn">Reserve</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-card">
+          <span class="eyebrow">Open now • Delivery & Dine-in</span>
+          <h1>Flavors that bring people together</h1>
+          <p class="lead">Hand-crafted dishes, freshly prepared daily. Explore our chef specials, seasonal menus and signature drinks. Order online or reserve a table in seconds.</p>
+
+          <div style="display:flex;gap:12px;margin-top:18px;align-items:center">
+            <input id="search" placeholder="Search dishes, e.g. biryani" style="flex:1;padding:12px;border-radius:12px;border:none;background:rgba(255,255,255,0.02);color:inherit" />
+            <button class="primary" id="openMenu">Explore Menu</button>
+          </div>
+
+          <div style="margin-top:18px;display:flex;gap:12px;align-items:center">
+            <div class="stats">
+              <div class="stat">
+                <div style="font-weight:800">250+</div>
+                <div style="font-size:13px;color:var(--muted)">Dishes Served</div>
+              </div>
+              <div class="stat">
+                <div style="font-weight:800">4.8</div>
+                <div style="font-size:13px;color:var(--muted)">Avg. Rating</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <aside class="hero-side">
+          <h3 style="margin-top:0">Chef's Specials</h3>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div class="menu-card">
+              <div class="dish-thumb">B</div>
+              <div style="flex:1" class="dish-info">
+                <h3>Hyderabadi Biryani</h3>
+                <p>Aromatic basmati rice cooked with saffron and tender meat.</p>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+                  <div class="price">₹260</div>
+                  <button class="add-btn" data-id="dish-1">Add</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="menu-card">
+              <div class="dish-thumb">K</div>
+              <div style="flex:1" class="dish-info">
+                <h3>Kerala Fish Curry</h3>
+                <p>Coconut and tamarind based tangy curry.</p>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+                  <div class="price">₹320</div>
+                  <button class="add-btn" data-id="dish-2">Add</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="menu-card">
+              <div class="dish-thumb">G</div>
+              <div style="flex:1" class="dish-info">
+                <h3>Gulab Jamun Cheesecake</h3>
+                <p>A fusion dessert combining Indian & Western sweets.</p>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+                  <div class="price">₹190</div>
+                  <button class="add-btn" data-id="dish-3">Add</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </aside>
+      </section>
+
+      <!-- MENU SECTION -->
+      <section id="menu">
+        <div class="section-title">
+          <h2>Our Menu</h2>
+          <div><small style="color:var(--muted)">Tap an item to add to cart</small></div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Menu categories">
+          <div class="tab active" data-cat="all">All</div>
+          <div class="tab" data-cat="mains">Mains</div>
+          <div class="tab" data-cat="seafood">Seafood</div>
+          <div class="tab" data-cat="dessert">Dessert</div>
+          <div class="tab" data-cat="drinks">Drinks</div>
+        </div>
+
+        <div class="grid" id="menuGrid">
+          <!-- JS will populate menu items here -->
+        </div>
+      </section>
+
+      <!-- SERVICES -->
+      <section id="services">
+        <div class="section-title"><h2>Services</h2><div></div></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div class="hero-card">
+            <h3>Private Events</h3>
+            <p class="lead">We host birthdays, corporate lunches, and intimate gatherings. Custom menus available.</p>
+          </div>
+          <div class="hero-card">
+            <h3>Home Catering</h3>
+            <p class="lead">Full-service catering for 10 - 500 guests with live cooking stations and staff.</p>
+          </div>
+          <div class="hero-card">
+            <h3>Online Ordering</h3>
+            <p class="lead">Order for pickup or delivery with live order status. Secure payments supported.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="about">
+        <div class="section-title"><h2>About Us</h2><div></div></div>
+        <div class="hero-card">
+          <p class="lead">Nandhana began as a family kitchen and grew into a neighbourhood favourite by focusing on authentic spices, locally-sourced ingredients and warm hospitality. Our chefs blend tradition with modern technique.</p>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section id="contact">
+        <div class="section-title"><h2>Contact & Location</h2><div></div></div>
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
+          <div class="hero-card">
+            <h3>Reach out</h3>
+            <p style="color:var(--muted)">Phone: +91 98765 43210 • Email: hello@nandhana.test</p>
+            <p class="lead">We are located at 12 Spice Street, Food City. Open daily 11:00 - 23:00.</p>
+
+            <h4>Send us a message</h4>
+            <div style="display:grid;gap:8px">
+              <input id="contactName" placeholder="Your name" />
+              <input id="contactEmail" placeholder="Email" />
+              <textarea id="contactMsg" placeholder="Message"></textarea>
+              <button class="primary" id="sendMsg">Send</button>
+            </div>
+          </div>
+
+          <div style="align-self:start" class="hero-card">
+            <h3>Quick facts</h3>
+            <p style="color:var(--muted);margin:0">Parking available • Wheelchair accessible • Outdoor seating</p>
+            <div style="height:180px;margin-top:12px;border-radius:10px;background:linear-gradient(180deg,#08101a,#021022);display:flex;align-items:center;justify-content:center;color:var(--muted)">Map Placeholder</div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <strong>Nandhana</strong><div style="color:var(--muted);font-size:13px">Serving joy since 2016</div>
+          </div>
+          <div style="color:var(--muted);font-size:13px">Made with ❤️ • View source to adapt this template</div>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- CART / ORDER DRAWER -->
+  <div class="drawer" role="status" aria-live="polite">
+    <h3>Your Order</h3>
+    <div class="cart-items" id="cartItems"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+      <div style="color:var(--muted)">Total:</div>
+      <div id="cartTotal" style="font-weight:800">₹0</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button id="viewCart" class="primary" style="flex:1">Checkout</button>
+      <button id="clearCart" style="background:transparent;border:1px solid rgba(255,255,255,0.04);padding:10px;border-radius:10px;cursor:pointer">Clear</button>
+    </div>
+  </div>
+
+  <!-- BOOKING MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Reserve a Table</h3>
+      <div class="form-row"><label for="rname">Name</label><input id="rname" required /></div>
+      <div class="form-row"><label for="rphone">Phone</label><input id="rphone" type="tel" required /></div>
+      <div class="form-row"><label for="rdate">Date & Time</label><input id="rdate" type="datetime-local" required /></div>
+      <div class="form-row"><label for="rcount">Party Size</label><select id="rcount"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6+</option></select></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button id="cancelReserve" class="primary" style="background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)">Cancel</button>
+        <button id="confirmReserve" class="primary">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /*********************************************
+     * Single-file demo restaurant website logic
+     * - lightweight in-memory mock cart
+     * - reservation saved to localStorage
+     * - searchable/filterable menu
+     *********************************************/
+
+    // -- Sample menu data (would be fetched from API in production)
+    const MENU = [
+      {id:'dish-1',title:'Hyderabadi Biryani',category:'mains',desc:'Aromatic basmati rice cooked with saffron and tender meat.',price:260},
+      {id:'dish-2',title:'Kerala Fish Curry',category:'seafood',desc:'Coconut and tamarind based tangy curry.',price:320},
+      {id:'dish-3',title:'Gulab Jamun Cheesecake',category:'dessert',desc:'A fusion dessert combining Indian & Western sweets.',price:190},
+      {id:'dish-4',title:'Paneer Butter Masala',category:'mains',desc:'Creamy tomato gravy with cottage cheese cubes.',price:220},
+      {id:'dish-5',title:'Prawn Pepper Fry',category:'seafood',desc:'Spicy black pepper prawns.',price:340},
+      {id:'dish-6',title:'Masala Dosa',category:'mains',desc:'Crispy dosa with spiced potato filling.',price:140},
+      {id:'dish-7',title:'Mango Lassi',category:'drinks',desc:'Sweet mango yoghurt drink.',price:90},
+      {id:'dish-8',title:'Filter Coffee',category:'drinks',desc:'South Indian filter coffee.',price:60},
+      {id:'dish-9',title:'Chocolate Brownie',category:'dessert',desc:'Warm fudgy brownie with ice cream.',price:160},
+    ];
+
+    // -- simple cart implementation
+    let cart = JSON.parse(localStorage.getItem('demo_cart')||'{}');
+
+    function saveCart(){localStorage.setItem('demo_cart', JSON.stringify(cart));}
+
+    function addToCart(id){
+      if(!cart[id]) cart[id]=0;
+      cart[id]++;
+      saveCart();
+      renderCart();
+    }
+
+    function removeFromCart(id){
+      if(!cart[id]) return;
+      cart[id]--;
+      if(cart[id]<=0) delete cart[id];
+      saveCart();
+      renderCart();
+    }
+
+    function clearCart(){cart={};saveCart();renderCart();}
+
+    function renderCart(){
+      const el = document.getElementById('cartItems');
+      el.innerHTML='';
+      let total=0;
+      const keys = Object.keys(cart);
+      if(keys.length===0){el.innerHTML='<div style="color:var(--muted)">Your cart is empty. Add items from the menu.</div>';document.getElementById('cartTotal').textContent='₹0';return}
+      keys.forEach(id=>{
+        const item = MENU.find(m=>m.id===id);
+        const qty = cart[id];
+        const row = document.createElement('div');row.className='cart-row';
+        row.innerHTML = `
+          <div style="display:flex;gap:10px;align-items:center">
+            <div style="width:44px;height:44px;border-radius:8px;background:linear-gradient(180deg,#07121a,#07121a);display:flex;align-items:center;justify-content:center">${item.title.charAt(0)}</div>
+            <div>
+              <div style="font-weight:700">${item.title}</div>
+              <div style="font-size:13px;color:var(--muted)">₹${item.price} x ${qty}</div>
+            </div>
+          </div>
+          <div class="qty">
+            <button aria-label="decrease" data-id="${id}" class="dec">-</button>
+            <div style="min-width:20px;text-align:center">${qty}</div>
+            <button aria-label="increase" data-id="${id}" class="inc">+</button>
+          </div>
+        `;
+        el.appendChild(row);
+        total += item.price * qty;
+      });
+      document.getElementById('cartTotal').textContent = '₹' + total;
+
+      // attach qty events
+      el.querySelectorAll('.dec').forEach(btn=>btn.addEventListener('click',()=>{removeFromCart(btn.dataset.id)}));
+      el.querySelectorAll('.inc').forEach(btn=>btn.addEventListener('click',()=>{addToCart(btn.dataset.id)}));
+    }
+
+    // populate menu grid
+    const grid = document.getElementById('menuGrid');
+    function renderMenu(filter='all', search=''){
+      grid.innerHTML='';
+      const query = search.trim().toLowerCase();
+      const filtered = MENU.filter(m=> (filter==='all' || m.category===filter) && (m.title.toLowerCase().includes(query) || m.desc.toLowerCase().includes(query)) );
+      if(filtered.length===0){grid.innerHTML='<div style="color:var(--muted)">No dishes match your search.</div>';return}
+      filtered.forEach(item=>{
+        const card = document.createElement('div');card.className='menu-card';
+        card.innerHTML = `
+          <div class="dish-thumb">${item.title.charAt(0)}</div>
+          <div style="flex:1" class="dish-info">
+            <h3>${item.title}</h3>
+            <p>${item.desc}</p>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div class="price">₹${item.price}</div>
+              <button class="add-btn" data-id="${item.id}">Add</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      // attach add events
+      grid.querySelectorAll('.add-btn').forEach(b=>b.addEventListener('click', e=>addToCart(e.target.dataset.id)));
+    }
+
+    // tabs
+    document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click', e=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      renderMenu(tab.dataset.cat, document.getElementById('search').value);
+    }));
+
+    // search
+    document.getElementById('search').addEventListener('input', e=>{
+      const active = document.querySelector('.tab.active').dataset.cat;
+      renderMenu(active, e.target.value);
+    });
+
+    // hero add buttons
+    document.querySelectorAll('.add-btn').forEach(b=>b.addEventListener('click', e=>addToCart(e.target.dataset.id)));
+
+    // reserve modal
+    const modal = document.getElementById('modalBackdrop');
+    document.getElementById('reserveBtn').addEventListener('click', ()=>modal.style.display='flex');
+    document.getElementById('cancelReserve').addEventListener('click', ()=>modal.style.display='none');
+    document.getElementById('confirmReserve').addEventListener('click', ()=>{
+      const name = document.getElementById('rname').value.trim();
+      const phone = document.getElementById('rphone').value.trim();
+      const date = document.getElementById('rdate').value;
+      const count = document.getElementById('rcount').value;
+      if(!name||!phone||!date){alert('Please fill name, phone and date');return}
+      const reservation = {name, phone, date, count, createdAt:new Date().toISOString()};
+      const list = JSON.parse(localStorage.getItem('demo_reservations')||'[]');
+      list.push(reservation);localStorage.setItem('demo_reservations', JSON.stringify(list));
+      modal.style.display='none';
+      alert('Reservation confirmed — we look forward to serving you!');
+    });
+
+    // contact form
+    document.getElementById('sendMsg').addEventListener('click', ()=>{
+      const name = document.getElementById('contactName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const msg = document.getElementById('contactMsg').value.trim();
+      if(!name||!email||!msg){alert('Please fill all fields');return}
+      // simulate send
+      console.log('Message sent:', {name,email,msg});
+      alert('Thanks — message sent!');
+      document.getElementById('contactName').value='';document.getElementById('contactEmail').value='';document.getElementById('contactMsg').value='';
+    });
+
+    // cart controls
+    document.getElementById('clearCart').addEventListener('click', ()=>{if(confirm('Clear cart?')) clearCart();});
+    document.getElementById('viewCart').addEventListener('click', ()=>{
+      // simple checkout flow
+      const keys = Object.keys(cart);
+      if(keys.length===0){alert('Your cart is empty');return}
+      const total = keys.reduce((sum,id)=> sum + (MENU.find(m=>m.id===id).price * cart[id]),0);
+      if(confirm(`Confirm order for ₹${total}?`)){
+        // place order
+        const orders = JSON.parse(localStorage.getItem('demo_orders')||'[]');
+        const order = {items:cart, total, placedAt:new Date().toISOString()};
+        orders.push(order);localStorage.setItem('demo_orders', JSON.stringify(orders));
+        alert('Order placed! We will update status shortly.');
+        clearCart();
+      }
+    });
+
+    // initial render
+    renderMenu();renderCart();
+
+    // keyboard accessibility: escape to close modal
+    document.addEventListener('keydown', e=>{if(e.key==='Escape') modal.style.display='none'})
+
+    // small progressive enhancement: prefill search from URL ?q=...
+    (function(){
+      try{
+        const params = new URLSearchParams(location.search);
+        const q = params.get('q');
+        if(q){document.getElementById('search').value=q;renderMenu('all',q)}
+      }catch(e){}
+    })();
+
+  </script>
+</body>
+</html>
